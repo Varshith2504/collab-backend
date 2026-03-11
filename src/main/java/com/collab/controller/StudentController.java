@@ -10,7 +10,7 @@ import com.collab.service.StudentService;
 
 @RestController
 @RequestMapping("/students")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://collab-frontend-liart.vercel.app")
 public class StudentController {
 
 @Autowired

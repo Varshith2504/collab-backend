@@ -17,7 +17,7 @@ import com.collab.service.ProjectService;
 
 @RestController
 @RequestMapping("/projects")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://collab-frontend-liart.vercel.app")
 public class ProjectController {
 
 @Autowired

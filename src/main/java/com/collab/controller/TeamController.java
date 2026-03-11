@@ -12,7 +12,6 @@ import com.collab.service.TeamService;
 
 @RestController
 @RequestMapping("/team")
-@CrossOrigin(origins = "https://collab-frontend-liart.vercel.app")
 public class TeamController {
 
     @Autowired

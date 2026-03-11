@@ -28,4 +28,12 @@ public ResponseEntity<Student> login(@RequestBody Student student) {
     }
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 }
+@PutMapping("/students/{id}")
+public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student updated) {
+    return service.getStudentById(id).map(student -> {
+        student.setName(updated.getName());
+        student.setSkill(updated.getSkill());
+        return ResponseEntity.ok(service.saveStudent(student));
+    }).orElse(ResponseEntity.notFound().build());
+}
 }

@@ -1,4 +1,4 @@
-package com.collab.config;
+package com.collab.config; // ← change to your actual package name
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +14,14 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                	.allowedOrigins("*")
+                    .allowedOrigins(
+                        "https://collab-frontend-liart.vercel.app",
+                        "http://localhost:5173",
+                        "http://localhost:3000"
+                    )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
-                    .allowCredentials(false);
+                    .allowCredentials(true);
             }
         };
     }

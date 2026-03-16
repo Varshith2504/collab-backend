@@ -174,4 +174,20 @@ public void removeMember(@PathVariable Long projectId, @PathVariable Long studen
         .findFirst()
         .ifPresent(teamRepo::delete);  // ← teamRepo
 }
+/* LEAVE PROJECT */
+@PostMapping("/{projectId}/leave")
+public void leaveProject(@PathVariable Long projectId, @RequestBody java.util.Map<String, Long> body) {
+    Long studentId = body.get("studentId");
+    List<TeamMember> members = teamRepo.findByProjectId(projectId);
+    members.stream()
+        .filter(tm -> tm.getStudentId().equals(studentId))
+        .findFirst()
+        .ifPresent(tm -> {
+            teamRepo.delete(tm);
+            Project project = projectService.getProjectById(projectId);
+            project.setMembers(project.getMembers() - 1);
+            projectService.saveProject(project);
+        });
 }
+}
+

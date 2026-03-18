@@ -6,11 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.collab.entity.FileAccess;
 import com.collab.entity.JoinRequest;
 import com.collab.entity.Project;
+import com.collab.entity.ProjectFile;
 import com.collab.entity.Student;
 import com.collab.entity.TeamMember;
+import com.collab.repository.FileAccessRepository;
 import com.collab.repository.JoinRequestRepository;
+import com.collab.repository.ProjectFileRepository;
 import com.collab.repository.ProjectRepository;
 import com.collab.repository.StudentRepository;
 import com.collab.repository.TeamMemberRepository;
@@ -36,7 +40,10 @@ private StudentRepository studentRepo;
 @Autowired 
 private ProjectRepository projectRepo;
 
-
+@Autowired 
+private ProjectFileRepository fileRepo;
+@Autowired 
+private FileAccessRepository fileAccessRepo;
 
 
 
@@ -219,6 +226,51 @@ public ResponseEntity<Project> updateResource(@PathVariable Long id,
         p.setResourceUrl(body.get("resourceUrl"));
         return ResponseEntity.ok(projectRepo.save(p));
     }).orElse(ResponseEntity.notFound().build());
+}
+@GetMapping("/projects/{id}/files")
+public ResponseEntity<List<ProjectFile>> getFiles(@PathVariable Long id) {
+    return ResponseEntity.ok(fileRepo.findByProjectId(id));
+}
+
+@PostMapping("/projects/{id}/files")
+public ResponseEntity<ProjectFile> addFile(@PathVariable Long id,
+        @RequestBody ProjectFile file) {
+    file.setProjectId(id);
+    return ResponseEntity.ok(fileRepo.save(file));
+}
+
+@PutMapping("/projects/{id}/files/{fileId}")
+public ResponseEntity<ProjectFile> updateFile(@PathVariable Long id,
+        @PathVariable Long fileId, @RequestBody ProjectFile updated) {
+    return fileRepo.findById(fileId).map(f -> {
+        f.setContent(updated.getContent());
+        f.setFileName(updated.getFileName());
+        f.setLanguage(updated.getLanguage());
+        return ResponseEntity.ok(fileRepo.save(f));
+    }).orElse(ResponseEntity.notFound().build());
+}
+
+@DeleteMapping("/projects/{id}/files/{fileId}")
+public ResponseEntity<Void> deleteFile(@PathVariable Long id,
+        @PathVariable Long fileId) {
+    fileRepo.deleteById(fileId);
+    return ResponseEntity.ok().build();
+}
+
+// ── File Access ──
+@GetMapping("/projects/{id}/access")
+public ResponseEntity<List<FileAccess>> getAccess(@PathVariable Long id) {
+    return ResponseEntity.ok(fileAccessRepo.findByProjectId(id));
+}
+
+@PostMapping("/projects/{id}/access")
+public ResponseEntity<FileAccess> grantAccess(@PathVariable Long id,
+        @RequestBody FileAccess access) {
+    // Update if exists
+    fileAccessRepo.findByProjectIdAndMemberEmail(id, access.getMemberEmail())
+        .ifPresent(existing -> fileAccessRepo.deleteById(existing.getId()));
+    access.setProjectId(id);
+    return ResponseEntity.ok(fileAccessRepo.save(access));
 }
 }
 

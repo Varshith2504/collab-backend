@@ -11,9 +11,11 @@ import com.collab.entity.Project;
 import com.collab.entity.Student;
 import com.collab.entity.TeamMember;
 import com.collab.repository.JoinRequestRepository;
+import com.collab.repository.ProjectRepository;
 import com.collab.repository.StudentRepository;
 import com.collab.repository.TeamMemberRepository;
 import com.collab.service.ProjectService;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/projects")
@@ -30,6 +32,9 @@ private TeamMemberRepository teamRepo;
 
 @Autowired
 private StudentRepository studentRepo;
+
+@Autowired 
+private ProjectRepository projectRepo;
 
 
 
@@ -188,6 +193,32 @@ public void leaveProject(@PathVariable Long projectId, @RequestBody java.util.Ma
             project.setMembers(project.getMembers() - 1);
             projectService.saveProject(project);
         });
+}
+
+@Autowired
+private com.collab.repository.MessageRepository messageRepo;
+
+// ── Chat ──
+@GetMapping("/{id}/messages")
+public List<com.collab.entity.Message> getMessages(@PathVariable Long id) {
+    return messageRepo.findByProjectIdOrderBySentAtAsc(id);
+}
+
+@PostMapping("/{id}/messages")
+public com.collab.entity.Message sendMessage(@PathVariable Long id,
+        @RequestBody com.collab.entity.Message msg) {
+    msg.setProjectId(id);
+    return messageRepo.save(msg);
+}
+
+// ── Resource URL ──
+@PutMapping("/{id}/resource")
+public ResponseEntity<Project> updateResource(@PathVariable Long id,
+        @RequestBody java.util.Map<String, String> body) {
+    return projectRepo.findById(id).map(p -> {
+        p.setResourceUrl(body.get("resourceUrl"));
+        return ResponseEntity.ok(projectRepo.save(p));
+    }).orElse(ResponseEntity.notFound().build());
 }
 }
 

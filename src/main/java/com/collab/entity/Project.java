@@ -15,6 +15,7 @@ private String skills;
 private int maxMembers;
 private int members;
 private String owner;
+private String resourceUrl;
 public Long getId() {
 	return id;
 }
@@ -57,5 +58,12 @@ public String getOwner() {
 public void setOwner(String owner) {
 	this.owner = owner;
 }
+public String getResourceUrl() {
+	return resourceUrl;
+}
+public void setResourceUrl(String resourceUrl) {
+	this.resourceUrl = resourceUrl;
+}
+
 
 }

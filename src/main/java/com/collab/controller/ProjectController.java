@@ -229,19 +229,19 @@ public ResponseEntity<Project> updateResource(@PathVariable Long id,
         return ResponseEntity.ok(projectRepo.save(p));
     }).orElse(ResponseEntity.notFound().build());
 }
-@GetMapping("/projects/{id}/files")
+@GetMapping("/{id}/files")
 public ResponseEntity<List<ProjectFile>> getFiles(@PathVariable Long id) {
     return ResponseEntity.ok(fileRepo.findByProjectId(id));
 }
 
-@PostMapping("/projects/{id}/files")
+@PostMapping("/{id}/files")
 public ResponseEntity<ProjectFile> addFile(@PathVariable Long id,
         @RequestBody ProjectFile file) {
     file.setProjectId(id);
     return ResponseEntity.ok(fileRepo.save(file));
 }
 
-@PutMapping("/projects/{id}/files/{fileId}")
+@PutMapping("/{id}/files/{fileId}")
 public ResponseEntity<ProjectFile> updateFile(@PathVariable Long id,
         @PathVariable Long fileId, @RequestBody ProjectFile updated) {
     return fileRepo.findById(fileId).map(f -> {
@@ -252,7 +252,7 @@ public ResponseEntity<ProjectFile> updateFile(@PathVariable Long id,
     }).orElse(ResponseEntity.notFound().build());
 }
 
-@DeleteMapping("/projects/{id}/files/{fileId}")
+@DeleteMapping("/{id}/files/{fileId}")
 public ResponseEntity<Void> deleteFile(@PathVariable Long id,
         @PathVariable Long fileId) {
     fileRepo.deleteById(fileId);
@@ -260,12 +260,12 @@ public ResponseEntity<Void> deleteFile(@PathVariable Long id,
 }
 
 // ── File Access ──
-@GetMapping("/projects/{id}/access")
+@GetMapping("/{id}/access")
 public ResponseEntity<List<FileAccess>> getAccess(@PathVariable Long id) {
     return ResponseEntity.ok(fileAccessRepo.findByProjectId(id));
 }
 
-@PostMapping("/projects/{id}/access")
+@PostMapping("/{id}/access")
 public ResponseEntity<FileAccess> grantAccess(@PathVariable Long id,
         @RequestBody FileAccess access) {
     // Update if exists
@@ -276,18 +276,18 @@ public ResponseEntity<FileAccess> grantAccess(@PathVariable Long id,
 }
 @Autowired private ProjectFolderRepository folderRepo;
 
-@GetMapping("/projects/{id}/folders")
+@GetMapping("/{id}/folders")
 public ResponseEntity<List<ProjectFolder>> getFolders(@PathVariable Long id) {
     return ResponseEntity.ok(folderRepo.findByProjectId(id));
 }
 
-@PostMapping("/projects/{id}/folders")
+@PostMapping("/{id}/folders")
 public ResponseEntity<ProjectFolder> addFolder(@PathVariable Long id, @RequestBody ProjectFolder folder) {
     folder.setProjectId(id);
     return ResponseEntity.ok(folderRepo.save(folder));
 }
 
-@DeleteMapping("/projects/{id}/folders/{folderId}")
+@DeleteMapping("/{id}/folders/{folderId}")
 public ResponseEntity<Void> deleteFolder(@PathVariable Long id, @PathVariable Long folderId) {
     folderRepo.deleteById(folderId);
     // also delete files in this folder

@@ -14,6 +14,9 @@ public class ProjectFile {
     private String language;
     private String uploadedBy;
     private LocalDateTime uploadedAt;
+    private Long folderId;
+    public Long getFolderId() { return folderId; }
+    public void setFolderId(Long f) { this.folderId = f; }
 
     @PrePersist
     public void prePersist() { this.uploadedAt = LocalDateTime.now(); }

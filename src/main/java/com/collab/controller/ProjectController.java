@@ -10,11 +10,13 @@ import com.collab.entity.FileAccess;
 import com.collab.entity.JoinRequest;
 import com.collab.entity.Project;
 import com.collab.entity.ProjectFile;
+import com.collab.entity.ProjectFolder;
 import com.collab.entity.Student;
 import com.collab.entity.TeamMember;
 import com.collab.repository.FileAccessRepository;
 import com.collab.repository.JoinRequestRepository;
 import com.collab.repository.ProjectFileRepository;
+import com.collab.repository.ProjectFolderRepository;
 import com.collab.repository.ProjectRepository;
 import com.collab.repository.StudentRepository;
 import com.collab.repository.TeamMemberRepository;
@@ -271,6 +273,28 @@ public ResponseEntity<FileAccess> grantAccess(@PathVariable Long id,
         .ifPresent(existing -> fileAccessRepo.deleteById(existing.getId()));
     access.setProjectId(id);
     return ResponseEntity.ok(fileAccessRepo.save(access));
+}
+@Autowired private ProjectFolderRepository folderRepo;
+
+@GetMapping("/projects/{id}/folders")
+public ResponseEntity<List<ProjectFolder>> getFolders(@PathVariable Long id) {
+    return ResponseEntity.ok(folderRepo.findByProjectId(id));
+}
+
+@PostMapping("/projects/{id}/folders")
+public ResponseEntity<ProjectFolder> addFolder(@PathVariable Long id, @RequestBody ProjectFolder folder) {
+    folder.setProjectId(id);
+    return ResponseEntity.ok(folderRepo.save(folder));
+}
+
+@DeleteMapping("/projects/{id}/folders/{folderId}")
+public ResponseEntity<Void> deleteFolder(@PathVariable Long id, @PathVariable Long folderId) {
+    folderRepo.deleteById(folderId);
+    // also delete files in this folder
+    fileRepo.findByProjectId(id).stream()
+        .filter(f -> folderId.equals(f.getFolderId()))
+        .forEach(f -> fileRepo.deleteById(f.getId()));
+    return ResponseEntity.ok().build();
 }
 }
 

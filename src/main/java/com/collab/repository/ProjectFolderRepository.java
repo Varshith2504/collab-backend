@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ProjectFolderRepository extends JpaRepository<ProjectFolder, Long> {
     List<ProjectFolder> findByProjectId(Long projectId);
+    List<ProjectFolder> findByProjectIdAndParentFolderIdIsNull(Long projectId);
+    List<ProjectFolder> findByParentFolderId(Long parentFolderId);
 }

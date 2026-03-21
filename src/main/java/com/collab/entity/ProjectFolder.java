@@ -9,7 +9,9 @@ public class ProjectFolder {
     private Long projectId;
     private String folderName;
     private String createdBy;
-
+    private Long parentFolderId;
+    public Long getParentFolderId() { return parentFolderId; }
+    public void setParentFolderId(Long p) { this.parentFolderId = p; }
     public Long getId() { return id; }
     public Long getProjectId() { return projectId; }
     public void setProjectId(Long p) { this.projectId = p; }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.collab.entity.FileAccess;
+import com.collab.entity.FilePermission;
 import com.collab.entity.JoinRequest;
 import com.collab.entity.Project;
 import com.collab.entity.ProjectFile;
@@ -14,6 +15,7 @@ import com.collab.entity.ProjectFolder;
 import com.collab.entity.Student;
 import com.collab.entity.TeamMember;
 import com.collab.repository.FileAccessRepository;
+import com.collab.repository.FilePermissionRepository;
 import com.collab.repository.JoinRequestRepository;
 import com.collab.repository.ProjectFileRepository;
 import com.collab.repository.ProjectFolderRepository;
@@ -295,6 +297,34 @@ public ResponseEntity<Void> deleteFolder(@PathVariable Long id, @PathVariable Lo
         .filter(f -> folderId.equals(f.getFolderId()))
         .forEach(f -> fileRepo.deleteById(f.getId()));
     return ResponseEntity.ok().build();
+}
+
+@Autowired private FilePermissionRepository filePermRepo;
+
+//Per-file permissions
+@GetMapping("/{id}/files/{fileId}/permissions")
+public ResponseEntity<List<FilePermission>> getFilePermissions(
+     @PathVariable Long id, @PathVariable Long fileId) {
+ return ResponseEntity.ok(filePermRepo.findByFileId(fileId));
+}
+
+@PostMapping("/{id}/files/{fileId}/permissions")
+public ResponseEntity<FilePermission> setFilePermission(
+     @PathVariable Long id, @PathVariable Long fileId,
+     @RequestBody FilePermission perm) {
+ filePermRepo.findByFileIdAndMemberEmail(fileId, perm.getMemberEmail())
+     .ifPresent(existing -> filePermRepo.deleteById(existing.getId()));
+ perm.setFileId(fileId);
+ return ResponseEntity.ok(filePermRepo.save(perm));
+}
+
+@DeleteMapping("/{id}/files/{fileId}/permissions/{email}")
+public ResponseEntity<Void> removeFilePermission(
+     @PathVariable Long id, @PathVariable Long fileId,
+     @PathVariable String email) {
+ filePermRepo.findByFileIdAndMemberEmail(fileId, email)
+     .ifPresent(p -> filePermRepo.deleteById(p.getId()));
+ return ResponseEntity.ok().build();
 }
 }
 

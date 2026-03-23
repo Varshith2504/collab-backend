@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Map;
 import com.collab.entity.Student;
 import com.collab.service.EmailService;
 import com.collab.service.StudentService;
@@ -84,5 +84,24 @@ public class StudentController {
             student.setSkill(updated.getSkill());
             return ResponseEntity.ok(service.saveStudent(student));
         }).orElse(ResponseEntity.notFound().build());
+    }
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerification(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        Student student = studentRepo.findByEmail(email);
+
+        if (student == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
+
+        if (student.isVerified())
+            return ResponseEntity.badRequest().body("already_verified");
+
+        // Generate a fresh token and send email
+        String token = java.util.UUID.randomUUID().toString();
+        student.setVerificationToken(token);
+        studentRepo.save(student);
+        emailService.sendVerificationEmail(email, token);
+
+        return ResponseEntity.ok("verification_sent");
     }
 }

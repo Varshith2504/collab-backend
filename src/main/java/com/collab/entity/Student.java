@@ -15,6 +15,16 @@ public class Student {
 	    private String email;
 	    private String skill;
 	    private String password;
+	    private String phone;
+	    private boolean verified = false;
+	    private String verificationToken;
+
+	    public String getPhone() { return phone; }
+	    public void setPhone(String p) { this.phone = p; }
+	    public boolean isVerified() { return verified; }
+	    public void setVerified(boolean v) { this.verified = v; }
+	    public String getVerificationToken() { return verificationToken; }
+	    public void setVerificationToken(String t) { this.verificationToken = t; }
 		public Long getId() {
 			return id;
 		}

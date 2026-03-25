@@ -13,7 +13,6 @@ import com.collab.security.JwtUtil;
 
 @RestController
 @RequestMapping("/students")
-@CrossOrigin(origins = "*")
 public class StudentController {
 
     @Autowired

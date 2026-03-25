@@ -49,6 +49,9 @@ private ProjectFileRepository fileRepo;
 @Autowired 
 private FileAccessRepository fileAccessRepo;
 
+@Autowired
+private com.collab.repository.NotificationRepository notificationRepo;
+
 
 
 /* GET ALL PROJECTS */
@@ -63,7 +66,21 @@ public List<Project> getProjects(){
 
 @PostMapping
 public Project createProject(@RequestBody Project project){
+    if(project.getStatus() == null) project.setStatus("Active");
     return projectService.saveProject(project);
+}
+
+
+/* UPDATE PROJECT */
+
+@PostMapping("/{id}")
+public Project updateProject(@PathVariable Long id, @RequestBody Project project){
+    Project existing = projectService.getProjectById(id);
+    if(existing != null){
+        project.setId(id);
+        return projectService.saveProject(project);
+    }
+    return null;
 }
 
 
@@ -83,8 +100,20 @@ public JoinRequest joinProject(
         @RequestBody JoinRequest request){
 
     request.setProjectId(projectId);
+    JoinRequest saved = joinRepo.save(request);
 
-    return joinRepo.save(request);
+    /* Notify owner */
+    Project p = projectService.getProjectById(projectId);
+    if (p != null) {
+        com.collab.entity.Notification n = new com.collab.entity.Notification();
+        n.setRecipientEmail(p.getOwner());
+        n.setMessage("New join request for project: " + p.getName());
+        n.setRead(false);
+        n.setCreatedAt(java.time.LocalDateTime.now());
+        notificationRepo.save(n);
+    }
+
+    return saved;
 }
 
 
@@ -138,6 +167,14 @@ teamRepo.save(tm);
 /* remove join request */
 
 joinRepo.delete(jr);
+
+/* Notify student */
+com.collab.entity.Notification n = new com.collab.entity.Notification();
+n.setRecipientEmail(jr.getEmail());
+n.setMessage("Your join request for project " + project.getName() + " was accepted!");
+n.setRead(false);
+n.setCreatedAt(java.time.LocalDateTime.now());
+notificationRepo.save(n);
 
 }
 

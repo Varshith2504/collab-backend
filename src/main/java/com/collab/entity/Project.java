@@ -16,6 +16,7 @@ private int maxMembers;
 private int members;
 private String owner;
 private String resourceUrl;
+private String status;
 public Long getId() {
 	return id;
 }
@@ -63,6 +64,12 @@ public String getResourceUrl() {
 }
 public void setResourceUrl(String resourceUrl) {
 	this.resourceUrl = resourceUrl;
+}
+public String getStatus() {
+	return status;
+}
+public void setStatus(String status) {
+	this.status = status;
 }
 
 

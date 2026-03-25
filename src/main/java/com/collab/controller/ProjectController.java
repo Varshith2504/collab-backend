@@ -74,13 +74,13 @@ public Project createProject(@RequestBody Project project){
 /* UPDATE PROJECT */
 
 @PostMapping("/{id}")
-public Project updateProject(@PathVariable Long id, @RequestBody Project project){
+public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project){
     Project existing = projectService.getProjectById(id);
     if(existing != null){
         project.setId(id);
-        return projectService.saveProject(project);
+        return ResponseEntity.ok(projectService.saveProject(project));
     }
-    return null;
+    return ResponseEntity.notFound().build();
 }
 
 

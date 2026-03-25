@@ -47,8 +47,11 @@ public class JwtFilter extends OncePerRequestFilter {
             var student = studentRepo.findByEmail(email);
 
             if (student != null && jwtUtil.validateToken(jwt, email)) {
+                String role = student.getRole();
+                if (role == null) role = "ROLE_USER"; // Default if null
+                
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        student, null, Collections.singletonList(new SimpleGrantedAuthority(student.getRole())));
+                        student, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

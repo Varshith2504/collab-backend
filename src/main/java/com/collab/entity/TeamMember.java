@@ -11,6 +11,7 @@ public class TeamMember {
 
     private Long studentId;
     private Long projectId;
+    private String statusMessage;
 	public Long getId() {
 		return id;
 	}
@@ -28,6 +29,12 @@ public class TeamMember {
 	}
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
+	}
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
     
 }

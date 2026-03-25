@@ -8,4 +8,5 @@ import com.collab.entity.TeamMember;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     List<TeamMember> findByProjectId(Long projectId);
+    com.collab.entity.TeamMember findByStudentIdAndProjectId(Long studentId, Long projectId);
 }

@@ -17,4 +17,13 @@ public class TeamService {
         return repo.save(t);
     }
 
+    public TeamMember updateStatusMessage(Long studentId, Long projectId, String message) {
+        TeamMember tm = repo.findByStudentIdAndProjectId(studentId, projectId);
+        if (tm != null) {
+            tm.setStatusMessage(message);
+            return repo.save(tm);
+        }
+        return null;
+    }
+
 }

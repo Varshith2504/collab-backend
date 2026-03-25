@@ -28,6 +28,7 @@ public class SecurityConfig {
             .cors(cors -> {}) // Uses CorsFilter bean if present, or configure here
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/students/login", "/students/register").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/projects/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/projects/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
